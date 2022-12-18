@@ -1,0 +1,31 @@
+Package: exMCnebula2
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: c(
+    person("LiChuang", "Huang", , "shaman.yellow@foxmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-5445-1988")),
+    person("Gang", "Cao", role = "cre")
+  )
+Author: LiChuang Huang <shaman.yellow@foxmail.com> [aut]
+    (<https://orcid.org/0000-0002-5445-1988>)Gang Cao [cre]
+Maintainer: LiChuang Huang <shaman.yellow@foxmail.com>
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Depends: 
+    ggplot2,
+    grid
+Imports: 
+    aplot,
+    ChemmineOB,
+    ggraph,
+    ggsci,
+    ggtree,
+    grImport2,
+    Hmisc,
+    igraph,
+    magrittr,
+    rsvg,
+    tidygraph
