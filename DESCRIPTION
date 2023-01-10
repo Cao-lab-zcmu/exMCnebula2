@@ -16,10 +16,16 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Depends: 
     ggplot2,
-    grid
+    grid,
+    R (>= 2.10)
 Imports: 
     aplot,
+    BiocParallel,
     ChemmineOB,
+    classyfireR,
+    data.table,
+    dplyr,
+    FELLA,
     ggraph,
     ggsci,
     ggtree,
@@ -27,5 +33,15 @@ Imports:
     Hmisc,
     igraph,
     magrittr,
+    MetaboAnalystR,
+    MSnbase,
+    pbapply,
+    RCurl,
+    rlang,
     rsvg,
-    tidygraph
+    scales,
+    stringr,
+    tibble,
+    tidygraph,
+    tidyr,
+    XML
