@@ -36,6 +36,8 @@ Imports:
     MetaboAnalystR,
     MSnbase,
     pbapply,
+    pdftools,
+    png,
     RCurl,
     rlang,
     rsvg,

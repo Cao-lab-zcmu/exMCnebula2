@@ -9,12 +9,15 @@ rename_table <-
 
 format_table <- 
   function(data, filter = .filter_format, arrange = .arrange_format,
-           distinct = .distinct_format, mutate = .mutate_format,
-           select = .select_format, export_name = .export_name) {
+    distinct = .distinct_format, mutate = .mutate_format,
+    select = .select_format, export_name = .export_name) {
     if (!is.null(filter))
       data <- dplyr::filter(data, !!!filter)
-    if (!is.null(arrange))
+    if (!is.null(arrange)) {
+      if (is.null(data.frame(data)$arrange.rank))
+        data <- dplyr::mutate(data, arrange.rank = NA)
       data <- dplyr::arrange(data, !!!arrange)
+    }
     if (!is.null(distinct))
       data <- dplyr::distinct(data, !!!distinct, .keep_all = T)
     if (!is.null(mutate))
@@ -36,8 +39,10 @@ format_table <-
   list(quote(tani.score >= .5))
 
 .arrange_format <- 
-  list(quote(inchikey2d),
-       quote(desc(tani.score))
+  list(
+    quote(arrange.rank),
+    quote(inchikey2d),
+    quote(desc(tani.score))
   )
 
 .distinct_format <- 
@@ -45,30 +50,33 @@ format_table <-
 
 .mutate_format <- 
   list(mz = quote(round(mz, 4)),
-       error.mass = quote(floor(error.mass * 10) / 10),
-       tani.score = quote(floor(tani.score * 100) / 100),
-       rt.min = quote(round(rt.secound / 60, 1))
+    error.mass = quote(floor(error.mass * 10) / 10),
+    tani.score = quote(floor(tani.score * 100) / 100),
+    rt.min = quote(round(rt.secound / 60, 1))
   )
 
 .select_format <- c("No.", "synonym", ".features_id", "mz", "error.mass",
-                  "rt.min", "mol.formula", "adduct", "tani.score", "inchikey2d",
-                  "class"
+  "rt.min", "mol.formula", "adduct", "tani.score", "inchikey2d",
+  "class", "logFC", "P.Value", "adj.P.Val"
 )
 
 .export_name <- c(mz = "Precursor m/z",
-                  rt.min = "RT (min)",
-                  similarity = "Spectral similarity",
-                  tani.score = "Tanimoto similarity",
-                  rel.index = "Relative index",
-                  rel.int. = "Relative intensity",
-                  group = "Group",
-                  .features_id = "ID",
-                  mol.formula = "Formula",
-                  inchikey2d = "InChIKey planar",
-                  error.mass = "Mass error (ppm)",
-                  synonym = "Synonym",
-                  adduct = "Adduct",
-                  class = "Class"
+  rt.min = "RT (min)",
+  similarity = "Spectral similarity",
+  tani.score = "Tanimoto similarity",
+  rel.index = "Relative index",
+  rel.int. = "Relative intensity",
+  group = "Group",
+  .features_id = "ID",
+  mol.formula = "Formula",
+  inchikey2d = "InChIKey planar",
+  error.mass = "Mass error (ppm)",
+  synonym = "Synonym",
+  adduct = "Adduct",
+  class = "Class",
+  logFC = "log2(FC)",
+  P.Value = "P-value",
+  adj.P.Val = "Q-value"
 )
 
 
