@@ -94,6 +94,15 @@ setMissing <-
     message(sig, " ", main, ": ", sub, " ", arg)
   }
 
+.suggest_bio_package <- 
+  function(pkg){
+    if (!requireNamespace(pkg, quietly = T))
+      stop("package '", pkg, "' not installed. use folloing to install:\n",
+           '\nif (!require("BiocManager", quietly = TRUE))',
+           '\n\tinstall.packages("BiocManager")',
+           '\nBiocManager::install("', pkg, '")\n\n')
+  }
+
 tmp_pdf <- function() {
   paste0(tempdir(), "/tmp_pdf.pdf")
 }
@@ -256,6 +265,19 @@ maps <- function(data, value, from, to) {
          })
 }
 
+order_list <- 
+  function(
+           list
+           ){
+    lt <- list()
+    length(lt) <- length(list)
+    names(lt) <- sort(names(list))
+    for(i in names(lt)){
+      lt[[i]] <- list[[i]]
+    }
+    return(lt)
+  }
+
 ## use 'molconvert' ...
 ## https://chemaxon.com/marvin
 molconvert_structure <-
@@ -265,3 +287,7 @@ molconvert_structure <-
     ChemmineOB::convertToImage("MOL", "SVG", source = src, toFile = path)
     rsvg::rsvg_svg(path, path)
   }
+
+obj.size <- function(x, ...) {
+  format(object.size(x), units = "MB", ...)
+}
