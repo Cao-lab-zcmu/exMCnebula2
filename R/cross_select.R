@@ -2,6 +2,21 @@
 # filter data according to colunm within another data.frame
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases select_features
+#'
+#' @title Select 'features' for MCnebula2
+#'
+#' @description Select significant 'features' from MCnebula2 with
+#' statistic results for downstream analysis of metabolomics.
+#'
+#' @name select_features
+NULL
+#> NULL
+
+#' @export select_features
+#' @aliases select_features
+#' @description \code{select_features}: ...
+#' @rdname select_features
 select_features <- function(
   mcn, classes = unique(nebula_index(mcn)$class.name),
   q.value = .05, logfc = .3, coef = NULL, tani.score_cutoff = NULL,
@@ -41,6 +56,10 @@ select_features <- function(
   return(res)
 }
 
+#' @export cross_select
+#' @aliases cross_select
+#' @description \code{cross_select}: ...
+#' @rdname select_features
 cross_select <- function(data.lst, filter.lst, target, split = NULL) {
   if (!is.list(data.lst) | !is.list(filter.lst))
     stop("`data.lst` and `filter.lst` must be 'list'.")
