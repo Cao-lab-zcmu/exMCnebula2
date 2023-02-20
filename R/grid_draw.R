@@ -1,7 +1,20 @@
 # ==========================================================================
 # class
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#' @import grid
+#' @exportClass graph
+#'
+#' @aliases graph
+#'
+#' @title A class built on 'grobs'
+#'
+#' @description ...
+#'
+#' @rdname graph-class
+#'
+#' @examples
+#' \dontrun{
+#' new('graph', ...)
+#' }
 graph <- 
   setClass("graph", 
     contains = character(),
@@ -31,16 +44,28 @@ setClassUnion("units", .class_unit)
 # color
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @export .default_color
 .default_color <- ggsci::pal_npg()(9)
 
 # ==========================================================================
 # method
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases draw
+#'
+#' @title draw class of 'graph' and 'grobs'
+#'
+#' @description ...
+#'
+#' @name draw-methods
+NULL
+#> NULL
+
 setGeneric("draw", 
   function(x, content)
     standardGeneric("draw"))
 
+#' @exportMethod draw
 setMethod("draw", 
   signature = c(x = "graph", content = "grob.obj"),
   function(x, content){
@@ -50,6 +75,7 @@ setMethod("draw",
     upViewport(1)
   })
 
+#' @exportMethod draw
 setMethod("draw", 
   signature = setMissing("draw",
     x = "graph"),
@@ -57,15 +83,21 @@ setMethod("draw",
     grid.draw(x@grob)
   })
 
+#' @exportMethod draw
 setMethod("draw", 
   signature = c(x = "grob.obj"),
   function(x){
     grid.draw(x)
   })
 
+#' @exportMethod into
+#' @title place 'grobs' into 'graph'
+#' @description ...
+#' @rdname into-methods
 setGeneric("into", 
   function(x, content) standardGeneric("into"))
 
+#' @exportMethod into
 setMethod("into", 
   signature = c(x = "graph", content = "grob.obj"),
   function(x, content){
@@ -77,9 +109,14 @@ setMethod("into",
     gTree(children = gList(x@grob, content))
   })
 
+#' @exportMethod setvp
+#' @title ...
+#' @description ...
+#' @rdname setvp-methods
 setGeneric("setvp", 
   function(x, ...) standardGeneric("setvp"))
 
+#' @exportMethod setvp
 setMethod("setvp", 
   signature = c(x = "ANY"),
   function(x, ...){
@@ -87,6 +124,7 @@ setMethod("setvp",
       grobWidth(x), grobHeight(x), ...)
   })
 
+#' @exportMethod weight
 setGeneric("weight", 
   function(x, sub) standardGeneric("weight"))
 setMethod("weight", 
@@ -101,14 +139,21 @@ setMethod("weight",
     as.list(sort(unlist(weight), decreasing = T))
   })
 
+#' @exportMethod as_grob
+#' @title convert 'ggplot' object to 'grobs'
+#' @description ...
+#' @rdname as_grob-methods
 setGeneric("as_grob",
   function(x) standardGeneric("as_grob"))
+
+#' @exportMethod as_grob
 setMethod("as_grob", 
   signature = c(x = "gg.obj"),
   function(x){
     ggplot2::ggplot_gtable(ggplot2::ggplot_build(x))
   })
 
+#' @export get_weight
 get_weight <- function(x){
   if (isS4(x)) {
     n <- length(slotNames(x))
@@ -125,25 +170,57 @@ get_weight <- function(x){
   }
 }
 
+#' @aliases frame
+#'
+#' @title draw in grid frame
+#'
+#' @description ...
+#'
+#' @name frame
+NULL
+#> NULL
+
+#' @export layout_row
+#' @aliases layout_row
+#' @description \code{layout_row}: ...
+#' @rdname frame
 layout_row <- function(weight){
   grid.layout(length(weight), 1, heights = weight)
 }
 
+#' @export frame_row
+#' @aliases frame_row
+#' @description \code{frame_row}: ...
+#' @rdname frame
 frame_row <- function(weight, data, if.ex){
   do.call(frame_place, .fresh_param(list(type = "row")))
 }
 
+#' @export layout_col
+#' @aliases layout_col
+#' @description \code{layout_col}: ...
+#' @rdname frame
 layout_col <- function(weight){
   grid.layout(1, length(weight), widths = weight)
 }
 
+#' @export frame_col
+#' @aliases frame_col
+#' @description \code{frame_col}: ...
+#' @rdname frame
 frame_col <- function(weight, data, if.ex){
   do.call(frame_place, .fresh_param(list(type = "col")))
 }
 
+#' @exportMethod frame_place
+#' @aliases frame_place
+#' @description \code{frame_place}: ...
+#' @rdname frame
 setGeneric("frame_place", 
   function(weight, data, type, if.ex) 
     standardGeneric("frame_place"))
+
+#' @exportMethod frame_place
 setMethod("frame_place", 
   signature = setMissing("frame_place",
     weight = "vector",
@@ -195,6 +272,20 @@ setMethod("frame_place",
     funs[which][[1]](weight, data)
   })
 
+#' @aliases setnull
+#'
+#' @title Set markers crossover viewports
+#'
+#' @description ...
+#'
+#' @name setnull
+NULL
+#> NULL
+
+#' @export setnull
+#' @aliases setnull
+#' @description \code{setnull}: ...
+#' @rdname setnull
 setnull <- function(target, args, name = "null"){
   gPath <- grid.grep(gPath(target), vpPath = T, grep = T)
   vpPath <- attr(gPath, "vpPath")
@@ -202,6 +293,10 @@ setnull <- function(target, args, name = "null"){
   do.call(nullGrob, args)
 }
 
+#' @export setnullvp
+#' @aliases setnullvp
+#' @description \code{setnullvp}: ...
+#' @rdname setnull
 setnullvp <- function(pattern, args, x, name = NULL, fix = T, perl = F){
   if (fix) pattern <- paste0("::", pattern, "$")
   vpPath <- gsub("ROOT::", "", grepPath(pattern, x = x, perl = perl)[1])
@@ -210,12 +305,16 @@ setnullvp <- function(pattern, args, x, name = NULL, fix = T, perl = F){
   do.call(nullGrob, args)
 }
 
+#' @export ruler
 ruler <- function(p1, p2){
   segmentsGrob(grobX(p1, 0), grobY(p1, 0),
     grobX(p2, 0), grobY(p2, 0))
 }
 
-## grid.grep
+#' @export grepPath
+#' @aliases grepPath
+#' @description \code{grepPath}: ...
+#' @rdname setnull
 grepPath <- 
   function (pattern, x = NULL, grobs = T, viewports = T, perl = F) {
     args <- list(x = x, grobs = grobs, viewports = viewports, print = F)
@@ -231,23 +330,29 @@ grepPath <-
   }
 
 
-## sort vpPaths
+#' @export sort_vpPaths
+#' @aliases sort_vpPaths
+#' @description \code{sort_vpPaths}: ...
+#' @rdname setnull
 sort_vpPaths <- function(vpPaths){
   nums <- vapply(vpPaths, FUN.VALUE = 0,
     function(ch) {length(grepRaw("::", ch, all = T))})
   lapply(order(nums), function(n) vpPaths[[ n ]])
 }
 
+#' @export u
 u <- function(n, unit){
   unit <- as.character(substitute(unit))
   unit(n, unit)
 }
 
+#' @export vptest
 vptest <- function(r = .7, fill = "lightblue"){
   x11(width = 7, height = 7 * r,)
   pushViewport(viewport(, , .5, .5, gp = gpar(fill = fill)))
 }
 
+#' @export sym_chem
 sym_chem <- function(smi){
   tmpsvg <- paste0(tempdir(), "/tempsvg.svg")
   ChemmineOB::convertToImage("SMI", "SVG", source = smi, toFile = tmpsvg)
@@ -258,6 +363,20 @@ sym_chem <- function(smi){
   .rm_background(.cairosvg_to_grob(tmpsvg))
 }
 
+#' @aliases ggather
+#'
+#' @title a mutate of grid::gTree
+#'
+#' @description ...
+#'
+#' @name ggather
+NULL
+#> NULL
+
+#' @export ggather
+#' @aliases ggather
+#' @description \code{ggather}: ...
+#' @rdname ggather
 ggather <- function(..., vp = NULL, gp = NULL){
   objs <- list(...)
   objs <- lapply(objs, function(obj) {
@@ -270,6 +389,10 @@ ggather <- function(..., vp = NULL, gp = NULL){
   gTree(children = glist, gp = gp, vp = vp)
 }
 
+#' @export zo
+#' @aliases zo
+#' @description \code{zo}: ...
+#' @rdname ggather
 zo <- function(x, w = .9, h = .9) {
   ggather(x, vp = viewport(, , w, h))
 }
@@ -277,9 +400,27 @@ zo <- function(x, w = .9, h = .9) {
 # ==========================================================================
 # arrow
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#' @aliases arrow
+#'
+#' @title draw arrow
+#'
+#' @description ...
+#'
+#' @name arrow
+NULL
+#> NULL
+
+#' @export .gpar_dashed_line
 .gpar_dashed_line <- gpar(fill = "black", lty = "dashed", lwd = unit(2, "line"))
+
+#' @export .gpar_dotted_line
 .gpar_dotted_line <- gpar(fill = "black", lty = "dashed", lwd = unit(2, "line"))
 
+#' @export parrow
+#' @aliases parrow
+#' @description \code{parrow}: ...
+#' @rdname arrow
 parrow <- function(n = 5, col, type = "dashed", lwd = u(1, line)){
   y <- seq(0, 1, length.out = n)[c(-1, -n)]
   segs <- segmentsGrob(rep(.1, n - 2), y,
@@ -298,9 +439,15 @@ setClassUnion("maybe_p1p2", c("null", "list"))
 setClassUnion("maybe_function", c("NULL", "function"))
 setClassUnion("maybe_list", c("NULL", "list"))
 
+#' @exportMethod garrow
+#' @aliases garrow
+#' @description \code{garrow}: ...
+#' @rdname arrow
 setGeneric("garrow", 
   function(p1, p2, args_line, args_arrow, fun_line, fun_arrow, city)
     standardGeneric("garrow"))
+
+#' @exportMethod garrow
 setMethod("garrow", 
   signature = setMissing("garrow"),
   function(){
@@ -314,6 +461,8 @@ setMethod("garrow",
       city = NULL
     )
   })
+
+#' @exportMethod garrow
 setMethod("garrow", 
   signature = c(p1 = "maybe_p1p2", p2 = "maybe_p1p2"),
   function(p1, p2, args_line, args_arrow,
@@ -325,6 +474,8 @@ setMethod("garrow",
     args <- .fresh_param2(default, args)
     reCallMethod("garrow", args)
   })
+
+#' @exportMethod garrow
 setMethod("garrow", 
   signature = c(p1 = "null", p2 = "null",
     args_line = "list",
@@ -339,6 +490,8 @@ setMethod("garrow",
     args$p2 <- list(x2 = grobX(p2, 0), y2 = grobY(p2, 0))
     reCallMethod("garrow", args)
   })
+
+#' @exportMethod garrow
 setMethod("garrow", 
   signature = c(p1 = "list", p2 = "list",
     args_line = "list",
@@ -384,6 +537,10 @@ setMethod("garrow",
     do.call(fun_line, args_line)
   })
 
+#' @export garrow_city
+#' @aliases garrow_city
+#' @description \code{garrow_city}: ...
+#' @rdname arrow
 garrow_city <- function(p1, p2, up, left, shift, gp_line){
   shift <- abs(shift)
   curvature <- 1
@@ -402,11 +559,19 @@ garrow_city <- function(p1, p2, up, left, shift, gp_line){
     city = list(args_line = args, shift = shift))
 }
 
+#' @export garrow_snake
+#' @aliases garrow_snake
+#' @description \code{garrow_snake}: ...
+#' @rdname arrow
 garrow_snake <- function(p1, p2, color, lwd = u(1, line), cur = 1){
   garrow(p1, p2, list(curvature = cur, square = T, ncp = 1, inflect = T,
       gp = gpar(lwd = lwd, col = color, fill = color)))
 }
 
+#' @export garrow_city_args
+#' @aliases garrow_city_args
+#' @description \code{garrow_city_args}: ...
+#' @rdname arrow
 garrow_city_args <- 
   function(shift = u(2, line), axis = "x", mid = .5,
     args_line = list(ncp = 1, curvature = 1, square = T),
@@ -415,6 +580,10 @@ garrow_city_args <-
     as.list(environment())
   }
 
+#' @export sagnage
+#' @aliases sagnage
+#' @description \code{sagnage}: ...
+#' @rdname arrow
 sagnage <- function(grob, left = T, l_gpar, borderF = 1.5, front_len = .1,
   vp_shift = u(1.5, line), ...){
   l_gpar <- .fresh_param2f(gpar(linejoin = "round", fill = "grey85",
@@ -442,11 +611,19 @@ sagnage <- function(grob, left = T, l_gpar, borderF = 1.5, front_len = .1,
   c(list(grob_anno = ggrob, vp_anno = vp), list(...))
 }
 
+#' @export sagnage_shiny
+#' @aliases sagnage_shiny
+#' @description \code{sagnage_shiny}: ...
+#' @rdname arrow
 sagnage_shiny <- function(label, left, color){
   sagnage(gtext(label, gpar(col = "white", fontface = "plain")), 
     left, gpar(fill = color))$grob_anno
 }
 
+#' @export maparrow
+#' @aliases maparrow
+#' @description \code{maparrow}: ...
+#' @rdname arrow
 maparrow <-
   function(obj, data, pattern = list(), round_cur = .3,
     pos = list(r = list(x = 1), l = list(x = 0),
@@ -529,6 +706,7 @@ maparrow <-
     namel(nulls, bafs, arr_city, arr_round, sags, data)
   }
 
+#' @export baf
 baf <- function(x, y, width = u(1, line), height = u(3, line)) {
   rect <- grectn(bgp_args = gpar(lty = "solid"))@grob
   clip <- clipGrob(, , .7)
@@ -539,9 +717,26 @@ baf <- function(x, y, width = u(1, line), height = u(3, line)) {
 # text
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases text
+#'
+#' @title a mutate of grid::textGrob
+#'
+#' @description ...
+#'
+#' @name text
+NULL
+#> NULL
+
+#' @export .font
 .font <- "Times"
+
+#' @export .title_gp
 .title_gp <- gpar(col = "black", cex = 1, fontfamily = .font, fontface = "bold")
 
+#' @export gtext
+#' @aliases gtext
+#' @description \code{gtext}: ...
+#' @rdname text
 gtext <- function(label, gp_arg, form = T, ...){
   args <- list(...)
   args <- .fresh_param2(list(x = 0.5, y = 0.5), args)
@@ -550,6 +745,10 @@ gtext <- function(label, gp_arg, form = T, ...){
   do.call(textGrob, args)
 }
 
+#' @export gtextp
+#' @aliases gtextp
+#' @description \code{gtextp}: ...
+#' @rdname text
 gtextp <- function(label, gp_arg, form = T, ...){
   if (missing(gp_arg))
     gp_arg <- list()
@@ -557,14 +756,26 @@ gtextp <- function(label, gp_arg, form = T, ...){
   gtext(label, gp_arg, form, ...)
 }
 
+#' @export gtext0
+#' @aliases gtext0
+#' @description \code{gtext0}: ...
+#' @rdname text
 gtext0 <- function(label, gp_arg, form = T, ...) {
   gtext(label, gp_arg, form, x = .1, hjust = 0, ...)
 }
 
+#' @export form
+#' @aliases form
+#' @description \code{form}: ...
+#' @rdname text
 form <- function(label){
   Hmisc::capitalize(gsub("_", " ",  label))
 }
 
+#' @export gltext
+#' @aliases gltext
+#' @description \code{gltext}: ...
+#' @rdname text
 gltext <- function(label, gp_arg = list(), args = list(),
   l_gp = .gpar_dotted_line, flip = F, borderF = 1.2){
   if (flip) args$rot <- 90
@@ -589,16 +800,36 @@ gltext <- function(label, gp_arg = list(), args = list(),
 # rect
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases rect
+#'
+#' @title a mutate of grid::rectGrob
+#'
+#' @description ...
+#'
+#' @name rect
+NULL
+#> NULL
+
+#' @export .rect_gp
 .rect_gp <- gpar(fill = "transparent")
+#' @export .rect.r
 .rect.r <- unit(0.3, "lines")
+#' @export .vp.sep
 .vp.sep <- unit(0.25, "lines")
 
+#' @export .grecti.vp.p
 .grecti.vp.p <- list(width = unit(1, "npc") - .vp.sep,
   height = unit(1, "npc") - .vp.sep,
   clip = "on")
+#' @export .grecti.vp
 .grecti.vp <- do.call(viewport, .grecti.vp.p)
+#' @export .grecto.vp
 .grecto.vp <- do.call(viewport, .fresh_param2(.grecti.vp.p, list(clip = "inherit")))
 
+#' @export grect
+#' @aliases grect
+#' @description \code{grect}: ...
+#' @rdname rect
 grect <- function(name, tfill = "#E18727FF", bfill = "white",
   t_args, tgp_args, t = roundrectGrob,
   b_args, bgp_args, b = roundrectGrob,
@@ -620,7 +851,10 @@ grect <- function(name, tfill = "#E18727FF", bfill = "white",
   gTree(children = gList(trect, brect)[order], name = name, vp = vp)
 }
 
-# grid.draw(grect("test"))
+#' @export grecti
+#' @aliases grecti
+#' @description \code{grecti}: ...
+#' @rdname rect
 grecti <- function(label, cex = 1, x = 0.5, y = 1.005,
   borderF = 2, just = c("center", "top"),
   tfill = "#E18727FF", vp = .grecti.vp,
@@ -665,6 +899,10 @@ grecti <- function(label, cex = 1, x = 0.5, y = 1.005,
   graph(grob = grob, cvp = cvp)
 }
 
+#' @export grecti2
+#' @aliases grecti2
+#' @description \code{grecti2}: ...
+#' @rdname rect
 grecti2 <- function(label, cex = 1, tfill = "#E18727FF",
   borderF = list(2), ...){
   tgp_args <- list(col = tfill)
@@ -674,6 +912,10 @@ grecti2 <- function(label, cex = 1, tfill = "#E18727FF",
   do.call(grecti, args)
 }
 
+#' @export grecti3
+#' @aliases grecti3
+#' @description \code{grecti3}: ...
+#' @rdname rect
 grecti3 <- function(label, cex = 1, tfill = "#E18727FF",
   borderF = list(2), ...){
   tgp_args <- list(col = "black")
@@ -683,6 +925,10 @@ grecti3 <- function(label, cex = 1, tfill = "#E18727FF",
   do.call(grecti, args)
 }
 
+#' @export grecto
+#' @aliases grecto
+#' @description \code{grecto}: ...
+#' @rdname rect
 grecto <- function(label, cex = 1, x = 0.5, y = 0.995,
   borderF = 2, just = c("center", "bottom"),
   tfill = "#E18727FF", vp = .grecto.vp,
@@ -691,6 +937,10 @@ grecto <- function(label, cex = 1, x = 0.5, y = 0.995,
   do.call(grecti, args)
 }
 
+#' @export grectn
+#' @aliases grectn
+#' @description \code{grectn}: ...
+#' @rdname rect
 grectn <- function(bfill = "white", b_args, bgp_args, b = roundrectGrob,
   cvp_clip = "inherit") {
   b <- match.fun(b)
@@ -700,6 +950,10 @@ grectn <- function(bfill = "white", b_args, bgp_args, b = roundrectGrob,
   graph(grob = brect, cvp = setvp(brect, clip = cvp_clip))
 }
 
+#' @export grectn_frame
+#' @aliases grectn_frame
+#' @description \code{grectn_frame}: ...
+#' @rdname rect
 grectn_frame <- function(content, title, zo = T){
   if (zo) content <- zo(content)
   content <- frame_row(c(title = .2, content = 1), namel(title, content))
@@ -707,6 +961,10 @@ grectn_frame <- function(content, title, zo = T){
   into(rect, content)
 }
 
+#' @export lst_grecti
+#' @aliases lst_grecti
+#' @description \code{lst_grecti}: ...
+#' @rdname rect
 lst_grecti <- function(names, pal, tar = "slot", fun = grecti, ...){
   sapply(names, simplify = F,
     function(name){
@@ -714,6 +972,10 @@ lst_grecti <- function(names, pal, tar = "slot", fun = grecti, ...){
     })
 }
 
+#' @export grectN
+#' @aliases grectN
+#' @description \code{grectN}: ...
+#' @rdname rect
 grectN <- function(lab.1, lab.2, gp = gpar(fontface = "plain"),
   bfill = "white"){
   frame <- frame_row(list(lab.1 = 1, seg = .1, lab.2 = 1),
@@ -723,6 +985,10 @@ grectN <- function(lab.1, lab.2, gp = gpar(fontface = "plain"),
   into(grectn(bfill, , list(lty = "solid")), frame)
 }
 
+#' @export grecta
+#' @aliases grecta
+#' @description \code{grecta}: ...
+#' @rdname rect
 grecta <- function(label, cex = 4) {
   grob <- gtext(
     label, list(cex = cex), form = F,
@@ -736,6 +1002,10 @@ grecta <- function(label, cex = 4) {
   graph(grob = grob, cvp = cvp)
 }
 
+#' @export gshiny
+#' @aliases gshiny
+#' @description \code{gshiny}: ...
+#' @rdname rect
 gshiny <- function(xn = 4, yn = 3,
   xps = seq(0, 1, , xn), yps = seq(0, 1, , yn),
   size = c(.15, .02),
@@ -770,6 +1040,7 @@ gshiny <- function(xn = 4, yn = 3,
   graph(grob = do.call(ggather, args), cvp = cvp)
 }
 
+#' @export sym_fill
 sym_fill <- function(long, short){
   if (length(long) %% 2 == 0) {
     short <- short[1:(length(long) / 2)]
@@ -788,12 +1059,14 @@ sym_fill <- function(long, short){
 # get external grob
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @export .expathsvg
 .expathsvg <-
   system.file("extdata", "svg",
     package = gsub("^.*:", "",
       environmentName(topenv(environment()))))
 prefix <- c()
 
+#' @export .check_external_svg
 .check_external_svg <- function(){
   files <- list.files(.expathsvg, "\\.svg$", full.names = T)
   log.path <- paste0(.expathsvg, "/log")
@@ -820,6 +1093,7 @@ prefix <- c()
 }
 .check_external_svg()
 
+#' @export ex_grob
 ex_grob <- function(name, fun = .cairosvg_to_grob){
   file <- paste0(.expathsvg, "/", name, ".svg")
   if (file.exists(file)) {
@@ -829,6 +1103,7 @@ ex_grob <- function(name, fun = .cairosvg_to_grob){
   }
 }
 
+#' @export ex_pic
 ex_pic <- function(name){
   ex_grob(name, fun = grImport2::readPicture)
 }
@@ -837,6 +1112,10 @@ ex_pic <- function(name){
 # layers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @export glayer
+#' @aliases glayer
+#' @description \code{glayer}: ...
+#' @rdname rect
 glayer <- 
   function(n = 5, to = .2, gp = gpar(fill = "white"), fun = rectGrob){
     grob <- fun(x = seq(0, to, length.out = n),
@@ -854,12 +1133,30 @@ glayer <-
 # network
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases network
+#'
+#' @title Quickly draw random network diagrams
+#'
+#' @description ...
+#'
+#' @name network
+NULL
+#> NULL
+
+#' @export fast_layout
+#' @aliases fast_layout
+#' @description \code{fast_layout}: ...
+#' @rdname network
 fast_layout <- function(edges, layout = "fr", nodes = NULL){
   graph <- igraph::graph_from_data_frame(edges, directed = T, vertices = nodes)
   graph <- tidygraph::as_tbl_graph(graph)
   ggraph::create_layout(graph, layout)
 }
 
+#' @export random_graph
+#' @aliases random_graph
+#' @description \code{random_graph}: ...
+#' @rdname network
 random_graph <- function(ids, n = 5, e = 4, layout = "fr") {
   df <- data.frame(id = ids, size = rnorm(n, .5, .2))
   edges <- data.frame(id1 = sample(ids, e), id2 = sample(ids, e),
@@ -871,6 +1168,20 @@ random_graph <- function(ids, n = 5, e = 4, layout = "fr") {
 # others
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases zoom_pdf
+#'
+#' @title Zoom in locally pdf to png
+#'
+#' @description ...
+#'
+#' @name zoom_pdf
+NULL
+#> NULL
+
+#' @export zoom_pdf
+#' @aliases zoom_pdf
+#' @description \code{zoom_pdf}: ...
+#' @rdname zoom_pdf
 zoom_pdf <- function(file, position = c(.5, .5), size = c(.15, .1), page = 1, dpi = 2000,
   as.grob = T)
 {

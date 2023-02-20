@@ -3,6 +3,21 @@
 # to extract mass data.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @aliases plot_EIC_stack
+#'
+#' @title Draw extracted ions chromatography for 'features'
+#'
+#' @description Use quantification table (with peak start time and end time)
+#' exported by MCmine to draw EIC plot.
+#'
+#' @name plot_EIC_stack
+NULL
+#> NULL
+
+#' @export plot_EIC_stack
+#' @aliases plot_EIC_stack
+#' @description \code{plot_EIC_stack}: ...
+#' @rdname plot_EIC_stack
 plot_EIC_stack <- 
   function(
     idset,
@@ -136,6 +151,10 @@ plot_EIC_stack <-
     return(data)
   }
 
+#' @export bioc.par
+#' @aliases bioc.par
+#' @description \code{bioc.par}: ...
+#' @rdname plot_EIC_stack
 bioc.par <-
   function(cl = 4){
     BiocParallel::register(
