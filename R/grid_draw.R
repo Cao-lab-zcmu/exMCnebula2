@@ -1168,6 +1168,15 @@ random_graph <- function(ids, n = 5, e = 4, layout = "fr") {
 # others
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#' @export sep_legend
+sep_legend <- function(p, theme) {
+  p.l <- MCnebula2:::.get_legend(p + theme)
+  theme$legend.position <- "none"
+  p.m <- p + theme
+  p <- p + theme
+  return(namel(p.l, p.m, p))
+}
+
 #' @aliases zoom_pdf
 #'
 #' @title Zoom in locally pdf to png
