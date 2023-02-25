@@ -25,11 +25,8 @@ vignettes/*.html
 vignettes/*.pdf
 
 # reference.pdf
-*.pdf
+/*.pdf
 .Rd2pdf*
-
-# inst data
-!inst/extdata/**
 
 # Rprofile
 .Rprofile
