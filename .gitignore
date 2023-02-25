@@ -28,6 +28,9 @@ vignettes/*.pdf
 *.pdf
 .Rd2pdf*
 
+# inst data
+!inst/extdata/**
+
 # Rprofile
 .Rprofile
 
