@@ -33,6 +33,7 @@ Imports:
     Hmisc,
     igraph,
     magrittr,
+    MCnebula2,
     pbapply,
     pdftools,
     png,
