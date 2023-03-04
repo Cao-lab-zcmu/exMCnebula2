@@ -260,7 +260,7 @@ s8.1 <- new_section2(
   rblock({
     n <- 20
     tops <- select_features(
-      mcn2, tani.score_cutoff = .5, order_by_coef = 1, togather = T
+      mcn, tani.score_cutoff = .5, order_by_coef = 1, togather = T
     )
     top20 <- tops[1:n]
     palette_set(melody(mcn)) <- colorRampPalette(palette_set(mcn))(n)
