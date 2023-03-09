@@ -336,7 +336,10 @@ data <- lapply(data,
     unlist(lapply(cl,
         function(cl) {
           mutate <- mutate[mutate != cl]
-          paste0(mutate, "_", cl)
+          vapply(mutate, FUN.VALUE = character(1),
+            function(v) {
+              paste0(sort(c(v, cl)), collapse = "_")
+            })
         }))
   })
 data <- tibble::tibble(Class = unlist(data))

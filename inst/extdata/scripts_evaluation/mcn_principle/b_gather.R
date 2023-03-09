@@ -58,5 +58,4 @@ prin <- ggather(prin, vp = vp)
 pdf("figure_mech.pdf", 11, 7)
 draw(prin)
 dev.off()
-# op(tmp_pdf())
-# file.copy(tmp_pdf(), "/mnt/data/wizard/Documents/article/MCnebula2/figure_mech.pdf", T)
+
