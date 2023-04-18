@@ -26,7 +26,7 @@ mglayer <- function(from = 1:5, n = 5, seed = 100) {
   grobs <- lapply(ns, function(n) {
                     ggather(glayer(n), vp = mshvp)
          })
-  sig <- paste0(paste0("glayer", seed), 1:5)
+  sig <- paste0(paste0("glayer", seed), 1:n)
   names(grobs) <- sig
   frame_col(fill_list(sig, 1), grobs)
 }

@@ -614,3 +614,15 @@ report <- do.call(new_report, sections)
 yaml(report)[1] <- c("title: Analysis on *E. ulmoides* dataset")
 render_report(report, file <- paste0(tmp, "/report.Rmd"))
 rmarkdown::render(file)
+
+# ==========================================================================
+# as biocStyle
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# library(MCnebula2)
+
+# write_biocStyle(report, file2 <- paste0(tmp, "/report_biocStyle_nofloat.Rmd"),
+#   title <- paste0(yaml(report)[1], "\nauthor: 'LiChuang Huang'")
+# )
+
+# rmarkdown::render(file2)

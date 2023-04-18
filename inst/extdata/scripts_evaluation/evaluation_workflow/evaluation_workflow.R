@@ -658,11 +658,12 @@ s2.593 <- new_section2(
       function(lst) {
         bar <- as_grob(lst$p.num)
         ring <- list(
-          p.ratioRelFal = as_grob(lst$p.ratioRelFal$p.m),
-          p.ratioSt = as_grob(lst$p.ratioSt$p.m)
+          p.precision = as_grob(lst$p.precision$p.m),
+          p.ratioSt = as_grob(lst$p.ratioSt$p.m),
+          p.recall = as_grob(lst$p.recall$p.m)
         )
-        frame <- frame_col(c(p.ratioSt = 2, p.ratioRelFal = 3), ring)
-        frame_col(c(bar = 2, frame = 5), c(namel(bar), namel(frame)))
+        frame <- frame_col(c(p.ratioSt = 2, p.precision = 3, p.recall = 3), ring)
+        frame_col(c(bar = 2, frame = 8), c(namel(bar), namel(frame)))
       })
     vis <- frame_row(c(lst_mcnebula = 1, lst_molnet = 1), vis)
     label_mcnebula <- gtext90("MCnebula", "#4DBBD5FF")
@@ -670,23 +671,25 @@ s2.593 <- new_section2(
     group_labels <- frame_row(c(label_mcnebula = 1, null = .1, label_molnet = 1),
       namel(label_mcnebula, label_molnet, null = nullGrob()))
     vis2 <- frame_col(c(group_labels = .1, vis = 5), namel(group_labels, vis))
-    legend <- frame_col(c(null = 2, p.ratioSt = 2, p.ratioRelFal = 3),
-      list(null = nullGrob(), p.ratioRelFal = lst_molnet$p.ratioRelFal$p.l,
+    legend <- frame_col(c(null = 2, null = 2, null = 3, null = 3),
+      list(null = nullGrob(), p.precision = lst_molnet$p.precision$p.l,
         p.ratioSt = lst_molnet$p.ratioSt$p.l))
     vis3 <- frame_row(c(vis2 = 5, legend = .5), namel(vis2, legend))
     label_sum <- gtext90("Sum number", "#709AE1FF", 0)
-    label_false <- gtext90("Relative false rate", "#FED439FF", 0)
+    label_false <- gtext90("Precision", "#FED439FF", 0)
     label_stab <- gtext90("Stability", "#91D1C2", 0)
+    label_recall <- gtext90("Recall", "#D5E4A2FF", 0)
     title_labels <- frame_col(
-      c(null = .2, label_sum = 2, null = .1, label_stab = 2, null = .1, label_false = 3), 
-      namel(label_sum, label_false, label_stab, null = nullGrob())
+      c(null = .2, label_sum = 2, null = .1, label_stab = 2, null = .1,
+        label_false = 3, null = .1, label_recall = 3), 
+      namel(label_sum, label_false, label_stab, label_recall, null = nullGrob())
     )
     vis4 <- frame_row(
       c(title_labels = 1, null = .5, vis3 = 15), 
       namel(title_labels, vis3, null = nullGrob())
     )
     vis4 <- ggather(vis4, vp = viewport(, , .95, .95))
-    pdf(f2.59 <- paste0(tmp, "/evaluation_summary.pdf"), 15, 5)
+    pdf(f2.59 <- paste0(tmp, "/evaluation_summary.pdf"), 17, 5)
     draw(vis4)
     dev.off()
   })
@@ -696,11 +699,12 @@ s2.594 <- include_figure(f2.59, "summary", "Evaluation sumary for MCnebula and b
 
 s2.595 <- c("Under the same conditions (common chemical classes), MCnebula outperforms the",
   "benchmark method (Fig. \\@ref(fig:summary)).",
-  "The formula for Relative false rate:",
-  "- RelativeFalseRate = 1 - (1 - FalseRate) * (1 - AverageLostRate)"
+  "The formula for Relative false rate and Recall (TP / (TP + FN)):",
+  "- RelativeFalseRate = 1 - (1 - FalseRate) * (1 - AverageLostRate)",
+  "- Recall = (1 - RelativeFalseRate) / (1 - RelativeFalseRate + AverageLostRate)"
 )
 
-notShow1 <- new_section2(
+s2.6 <- new_section2(
   c("Combine figure..."),
   rblock({
     vis_summary <- into(grecta("a"), vis4)
@@ -710,7 +714,7 @@ notShow1 <- new_section2(
     vis_id <- visualize_idRes(list(`No cut-off` = idRes, `0.5 cut-off` = idRes.5))
     vis_id <- into(grecta("c"), vis_id)
     frame1 <- frame_col(
-      c(vis_classify = 1.5, vis_id = 1),
+      c(vis_classify = 2, vis_id = 1),
       namel(vis_classify, vis_id)
     )
     frame2 <- frame_row(
@@ -718,11 +722,13 @@ notShow1 <- new_section2(
       namel(vis_summary, frame1)
     )
     frame2 <- ggather(frame2, vp = viewport(, , .95, .95))
-    pdf(paste0(tmp, "/compare_accuracy.pdf"), 14, 14)
+    pdf(fs <- paste0(tmp, "/compare_accuracy.pdf"), 18, 14)
     draw(frame2)
     dev.off()
   })
 )
+
+s2.61 <- include_figure(fs, "comP", "Overall summary")
 
 s2.7 <- new_heading("Evaluate accuracy of identification", 2)
 

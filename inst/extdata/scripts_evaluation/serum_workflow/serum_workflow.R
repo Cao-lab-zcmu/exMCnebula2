@@ -799,3 +799,28 @@ report <- insert_layers(report, seqs[2], h2)
 
 render_report(report, file.report <- paste0(tmp, "/report.rmd"))
 rmarkdown::render(file.report)
+
+# ==========================================================================
+# convert as html with biocStyle
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# library(MCnebula2)
+
+# write_biocStyle(report, file2 <- paste0(tmp, "/report_biocStyle_nofloat.Rmd"),
+#   title <- paste0(yaml(report)[1], "\nauther: 'LiChuang Huang'")
+# )
+
+# rmarkdown::render(file2)
+
+# ==========================================================================
+# convert to docx version
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# write_thesisDocx(report, file3 <- paste0(tmp, "/report_thesisStyle.Rmd"),
+#   title <- yaml(report)[1]
+# )
+
+# rmarkdown::render(file3)
+# file.copy(gsub("\\.Rmd", ".docx", file3),
+#   "/mnt/data/wizard/Documents/article/MCnebula2/others/report_serum.docx", T)
+
