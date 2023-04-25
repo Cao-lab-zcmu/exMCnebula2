@@ -728,10 +728,7 @@ NULL
 #> NULL
 
 #' @export .font
-.font <-
-  if (!is.null(getOption("mcnebulaFont"))) {
-    getOption("mcnebulaFont")
-  } else "Times"
+.font <- if (.Platform$OS.type == 'unix') "Times" else "Times New Roman"
 
 #' @export .title_gp
 .title_gp <- gpar(col = "black", cex = 1, fontfamily = .font, fontface = "bold")
@@ -1063,10 +1060,12 @@ sym_fill <- function(long, short){
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #' @export .expathsvg
-.expathsvg <-
-  system.file("extdata", "svg",
-    package = gsub("^.*:", "",
-      environmentName(topenv(environment()))))
+.expathsvg <- function() {
+  .expathsvg <- system.file("extdata", "svg", package = gsub("^.*:", "",
+      environmentName(topenv())))
+  assign('.expathsvg', .expathsvg, envir = topenv())
+}
+
 prefix <- c()
 
 #' @export .check_external_svg
@@ -1094,7 +1093,6 @@ prefix <- c()
   if (!is.null(log))
     writeLines(log, log.path)
 }
-.check_external_svg()
 
 #' @export ex_grob
 ex_grob <- function(name, fun = .cairosvg_to_grob){
@@ -1160,7 +1158,7 @@ fast_layout <- function(edges, layout = "fr", nodes = NULL){
 #' @aliases random_graph
 #' @description \code{random_graph}: ...
 #' @rdname network
-random_graph <- function(ids, n = 5, e = 4, layout = "fr") {
+random_graph <- function(ids, n = length(ids), e = 4, layout = "fr") {
   df <- data.frame(id = ids, size = rnorm(n, .5, .2))
   edges <- data.frame(id1 = sample(ids, e), id2 = sample(ids, e),
     width = rnorm(e, .5, .2))
@@ -1215,3 +1213,30 @@ zoom_pdf <- function(file, position = c(.5, .5), size = c(.15, .1), page = 1, dp
   }
   return(res)
 }
+
+# ==========================================================================
+# shape
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+simulate_peaks <- function(all_range = list(1:30, 31:60, 61:100, 101:140),
+  shift = rnorm(10, 2, 1))
+{
+  lst <- mapply(shift, 1:length(shift), SIMPLIFY = F, FUN = function(shift, id){
+    peak <- mapply(all_range, SIMPLIFY = F,
+      FUN = function(range){
+        peak <- dnorm(range, median(range) + shift, rnorm(1, 5, 1.2)) *
+          rnorm(1, 0.7, 0.15)
+      })
+    feature <- mapply(1:length(all_range), lengths(all_range),
+      FUN = function(seq, rep){
+        rep(paste0("peak", seq), rep)
+      })
+    tibble::tibble(x = unlist(all_range), y = unlist(peak),
+      sample = paste0("sample", id),
+      peak = unlist(feature)
+    )
+  })
+  data.table::rbindlist(lst)
+}
+
+
