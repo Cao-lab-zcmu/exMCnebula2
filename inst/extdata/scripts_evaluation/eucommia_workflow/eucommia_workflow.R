@@ -550,7 +550,7 @@ s13.3 <- new_section2(
     grob_struc2110 <- into(grecta("d"), grob_struc2110)
     grob_struc854 <- grid.grabExpr(show_structure(mcn2, "854"))
     grob_struc854 <- into(grecta("e"), grob_struc854)
-    grob_msms2110 <- as_grob(plot_msms_mirrors(mcn2, c("2110", "854"), structure_vp = NULL))
+    grob_msms2110 <- grid.grabExpr(plot_msms_mirrors(mcn2, c("2110", "854"), structure_vp = NULL))
     grob_msms2110 <- into(grecta("f"), grob_msms2110)
   })
 )
