@@ -728,7 +728,7 @@ NULL
 #> NULL
 
 #' @export .font
-.font <- if (.Platform$OS.type == 'unix') "Times" else "Times New Roman"
+.font <- "Times"
 
 #' @export .title_gp
 .title_gp <- gpar(col = "black", cex = 1, fontfamily = .font, fontface = "bold")
