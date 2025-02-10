@@ -151,33 +151,3 @@ extract_rdata_list <-
     return(list)
   }
 
-#' @export packing_as_rdata_list
-#' @aliases packing_as_rdata_list
-#' @description \code{packing_as_rdata_list}: gather table as .rdata
-#' @rdname query_synonyms
-packing_as_rdata_list <- 
-  function(
-    path,
-    pattern,
-    rdata,
-    extra = NULL,
-    rm_files = T,
-    dedup = T
-    ){
-    file_set <- list.files(path, pattern = pattern)
-    if(length(file_set) == 0)
-      return()
-    list <- pbapply::pblapply(paste0(path, "/", file_set), read_tsv)
-    names(list) <- file_set
-    list <- c(extra, list)
-    if(dedup){
-      df <- data.table::data.table(name = names(list), n = 1:length(list))
-      df <- dplyr::distinct(df, name, .keep_all = T)
-      list <- list[df$n]
-    }
-    if(rm_files){
-      lapply(paste0(path, "/", file_set), file.remove)
-    }
-    save(list, file = paste0(path, "/", rdata))
-  }
-
