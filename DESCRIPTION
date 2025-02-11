@@ -21,7 +21,6 @@ Depends:
 Imports: 
     aplot,
     BiocParallel,
-    ChemmineOB,
     classyfireR,
     data.table,
     dplyr,
