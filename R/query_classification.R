@@ -99,6 +99,6 @@ classyfire_get_classification <-
       return(inchikey)
     } else{
       ch <- classyfireR::classification(ch)
-      if (!is.null(ch)) write_tsv(ch, file) else return(inchikey)
+      if (nrow(ch) != 0) write_tsv(ch, file) else return(inchikey)
     }
   }
