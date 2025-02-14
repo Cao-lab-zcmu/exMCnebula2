@@ -89,16 +89,16 @@ classyfire_get_classification <-
   }
 
 .get_classification <-
-  function(inchikey, file){
-    if(!file.exists(file)){
+  function(inchikey, file) {
+    if (!file.exists(file)) {
       ch <- classyfireR::get_classification(inchikey)
-    }else{
+    } else{
       return()
     }
-    if(is.null(ch)){
+    if (is.null(ch)) {
       return(inchikey)
-    }else{
+    } else{
       ch <- classyfireR::classification(ch)
-      write_tsv(ch, file)
+      if (!is.null(ch)) write_tsv(ch, file) else return(inchikey)
     }
   }
