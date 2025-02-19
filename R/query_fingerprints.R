@@ -83,7 +83,7 @@ pubchem_get_fingerprints <- function(
   text <- httr::GET(url)
   if (text$status != 404) {
     text <- rawToChar(httr::content(text))
-    text <- unlist(strsplit("\n"))
+    text <- unlist(strsplit(text, "\n"))
   } else return(list(NA))
   
   y <- regexpr("^\\${4,4}", text, perl = TRUE)
