@@ -28,9 +28,10 @@ url = paste0(url_start, "/", inchikey2d, "/", url_end)
 }
 \seealso{
 Other queries: 
+\code{\link{packing_as_rdata_list}()},
 \code{\link{pick_annotation}},
 \code{\link{query_classification}()},
-\code{\link{query_iupac}()},
-\code{\link{query_synonyms}()}
+\code{\link{query_fingerprints}()},
+\code{\link{query_iupac}()}
 }
 \concept{queries}

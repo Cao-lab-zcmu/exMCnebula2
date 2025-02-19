@@ -33,9 +33,10 @@ The used function is:
 }
 \seealso{
 Other queries: 
+\code{\link{packing_as_rdata_list}()},
 \code{\link{pick_annotation}},
+\code{\link{query_fingerprints}()},
 \code{\link{query_inchikey}()},
-\code{\link{query_iupac}()},
-\code{\link{query_synonyms}()}
+\code{\link{query_iupac}()}
 }
 \concept{queries}

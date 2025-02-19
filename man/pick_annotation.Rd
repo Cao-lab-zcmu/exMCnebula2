@@ -60,10 +60,11 @@ Pick unique chemical class or synonyms for 'features'.
 }
 \seealso{
 Other queries: 
+\code{\link{packing_as_rdata_list}()},
 \code{\link{query_classification}()},
+\code{\link{query_fingerprints}()},
 \code{\link{query_inchikey}()},
-\code{\link{query_iupac}()},
-\code{\link{query_synonyms}()}
+\code{\link{query_iupac}()}
 }
 \concept{queries}
 \keyword{datasets}
