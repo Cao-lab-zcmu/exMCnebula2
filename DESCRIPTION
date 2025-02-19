@@ -44,4 +44,5 @@ Imports:
     tibble,
     tidygraph,
     tidyr,
-    XML
+    XML,
+    ChemmineR
