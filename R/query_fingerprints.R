@@ -26,7 +26,7 @@ query_fingerprints <- function(
     curl_cl = NULL,
     extra = NULL,
     gather_as_rdata = T, 
-    group_number = 50,
+    group_number = 1,
     ...
 ) {
   rdata <- file.path(dir, rdata.name)
@@ -81,8 +81,8 @@ pubchem_get_fingerprints <- function(
   url <- paste0(url_start, cid, url_end)
   
   text <- httr::GET(url)
-  if (text$status != 404) {
-    text <- rawToChar(httr::content(text))
+  if (text$status == 200) {
+    text <- rawToChar(httr::content(text, as = "raw"))
     text <- unlist(strsplit(text, "\n"))
   } else return(list(NA))
   
