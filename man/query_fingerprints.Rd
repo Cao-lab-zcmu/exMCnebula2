@@ -13,7 +13,7 @@ query_fingerprints(
   curl_cl = NULL,
   extra = NULL,
   gather_as_rdata = T,
-  group_number = 50,
+  group_number = 1,
   ...
 )
 
