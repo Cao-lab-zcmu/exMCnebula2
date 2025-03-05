@@ -124,5 +124,37 @@ format_table <-
   adj.P.Val = "Q-value"
 )
 
+#' @export mutate_cid
+mutate_cid <- function(feas, key.rdata = "key.rdata") {
+  cid.list <- extract_rdata_list(key.rdata)
+  cid.list <- cid.list[sapply(cid.list, length) == 2]
+  
+  cid.data <- data.frame(data.table::rbindlist(cid.list))
+  cid.data$InChIKey <- sub("-.*", "", cid.data$InChIKey)
+  cid.data <- cid.data[!duplicated(cid.data$InChIKey), ]
+  colnames(cid.data)[colnames(cid.data) == "InChIKey"] <- "inchikey2d"
+  
+  feas <- merge(feas, cid.data, by = "inchikey2d", all.x = TRUE)
+  feas <- dplyr::relocate(feas, CID, .after = .features_id)
+  feas <- dplyr::relocate(feas, inchikey2d, .after = CID)
+  return(feas)
+}
+
+#' @export get_all_classes
+get_all_classes <- function(key2d, feas, class.rdata = "class.rdata") {
+  class.list <- extract_rdata_list(class.rdata, key2d)
+  class.data <- data.frame(data.table::rbindlist(class.list, idcol = T))
+  colnames(class.data)[colnames(class.list) == ".id"] <- "inchikey2d"
+  
+  classes <- merge(
+    class.data, feas[, c("inchikey2d", ".features_id")], by = "inchikey2d"
+  )
+  classes <- data.table::dcast.data.table(
+    data.table::as.data.table(classes), .features_id ~ Level, 
+    value.var = "Classification"
+  )
+  return(classes)
+}
+
 
 

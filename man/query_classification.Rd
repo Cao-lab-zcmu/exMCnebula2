@@ -11,6 +11,7 @@ query_classification(
   inchikey.rdata = paste0(dir, "/inchikey.rdata"),
   rdata.name = "classification.rdata",
   classyfire_cl = NULL,
+  planB = FALSE,
   gather_as_rdata = T,
   ...
 )
@@ -20,6 +21,7 @@ classyfire_get_classification(
   dir,
   classyfire_cl = NULL,
   log_file = paste0(dir, "/classyfire.log"),
+  planB = FALSE,
   ...
 )
 }

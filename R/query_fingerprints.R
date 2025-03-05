@@ -135,7 +135,7 @@ packing_as_rdata_list <- function(
 }
 
 #' @export sdf_convert_tanimoto
-#' @import chemmineR
+#' @import ChemmineR
 #' @aliases sdf_convert_tanimoto
 #' @description \code{sdf_convert_tanimoto}: ...
 #' @rdname query_fingerprints
@@ -147,7 +147,7 @@ sdf_convert_tanimoto <- function(
   if (is.null(sdf_list)) {
     rdata <- file.path(dir, rdata.name)
     if (file.exists(rdata)) {
-      sdf_list <- exMCnebula2::extract_rdata_list(rdata)
+      sdf_list <- extract_rdata_list(rdata)
       sdf_list <- unname(sdf_list)
       sdf_list <- lapply(rapply(sdf_list, enquote, how = "unlist"), eval)
     } else stop("Error:Missing sdf_list or rdata file")
@@ -170,3 +170,29 @@ sdf_convert_tanimoto <- function(
   obj$value <- as.numeric(as.character(obj$value)) 
   return(obj)
 }
+
+#' @export cid.to.id
+cid.to.id <- function(edge_list, start, end, db){
+  
+  edge_list$source <- as.character(edge_list[, 1])#as.character(edge_list$source)
+  edge_list$target <- as.character(edge_list[, 2])#as.character(edge_list$target)
+  
+  #remove items not in db
+  ns <- !edge_list$source %in% db[[start]]
+  nt <- !edge_list$target %in% db[[start]]
+  
+  #the data base needs to be unique with regards to start
+  db[[satrt]] <- as.character(db[[start]])
+  db[[start]] <- make.unique(db[[start]])
+  
+  s <- dplyr::left_join(edge_list[, "source", drop = FALSE], db, by = c("source" = start))
+  s <- dplyr::select(s, end)
+  s <- setNames(s, "source")
+  
+  t <- dplyr::left_join(edge_list[, "target", drop = FALSE], db, by = c("target" = start))
+  t <- dplyr::select(t, end)
+  t <- setNames(t, "target")
+  
+  data.frame(s,t) 
+} 
+
