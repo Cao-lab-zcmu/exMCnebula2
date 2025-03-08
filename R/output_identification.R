@@ -105,7 +105,8 @@ format_table <-
 #' @aliases .export_name
 #' @description \code{.export_name}: ...
 #' @rdname format_table
-.export_name <- c(mz = "Precursor m/z",
+.export_name <- c(
+  mz = "Precursor m/z",
   rt.min = "RT (min)",
   similarity = "Spectral similarity",
   tani.score = "Tanimoto similarity",
@@ -125,7 +126,7 @@ format_table <-
 )
 
 #' @export mutate_cid
-mutate_cid <- function(feas, key.rdata = "key.rdata") {
+mutate_cid <- function(feas, key.rdata = key.rdata) {
   cid.list <- extract_rdata_list(key.rdata)
   cid.list <- cid.list[sapply(cid.list, length) == 2]
   
@@ -141,10 +142,10 @@ mutate_cid <- function(feas, key.rdata = "key.rdata") {
 }
 
 #' @export get_all_classes
-get_all_classes <- function(key2d, feas, class.rdata = "class.rdata") {
+get_all_classes <- function(feas, key2d, class.rdata = class.rdata) {
   class.list <- extract_rdata_list(class.rdata, key2d)
   class.data <- data.frame(data.table::rbindlist(class.list, idcol = T))
-  colnames(class.data)[colnames(class.list) == ".id"] <- "inchikey2d"
+  colnames(class.data)[colnames(class.data) == ".id"] <- "inchikey2d"
   
   classes <- merge(
     class.data, feas[, c("inchikey2d", ".features_id")], by = "inchikey2d"
