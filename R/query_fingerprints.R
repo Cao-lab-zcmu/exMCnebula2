@@ -182,7 +182,7 @@ cid.to.id <- function(edge_list, start, end, db){
   nt <- !edge_list$target %in% db[[start]]
   
   #the data base needs to be unique with regards to start
-  db[[satrt]] <- as.character(db[[start]])
+  db[[start]] <- as.character(db[[start]])
   db[[start]] <- make.unique(db[[start]])
   
   s <- dplyr::left_join(edge_list[, "source", drop = FALSE], db, by = c("source" = start))
