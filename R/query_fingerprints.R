@@ -135,7 +135,7 @@ packing_as_rdata_list <- function(
 }
 
 #' @export sdf_convert_tanimoto
-#' @import ChemmineR
+#' @importFrom ChemmineR cid sdfid fp2bit fpSim
 #' @aliases sdf_convert_tanimoto
 #' @description \code{sdf_convert_tanimoto}: ...
 #' @rdname query_fingerprints
@@ -154,10 +154,10 @@ sdf_convert_tanimoto <- function(
   } 
   cmpd.sdf.list <- new("SDFstr", a = sdf_list)
   sd.list <- as(cmpd.sdf.list, "SDFset")
-  cid(sd.list) <- sdfid(sd.list)
-  fpset <- fp2bit(sd.list, type = 2)
+  ChemmineR::cid(sd.list) <- ChemmineR::sdfid(sd.list)
+  fpset <- ChemmineR::fp2bit(sd.list, type = 2)
   out <- sapply(rownames(fpset), function(x) {
-    ChemmineR::fpSim(x = fpset[x,], fpset,sorted = FALSE) }) 
+    ChemmineR::fpSim(x = fpset[x,], fpset, sorted = FALSE) }) 
   mat <- as.matrix(out)
   id <- is.na(mat) # used to allow missing
   mat[id] <- "nna"
