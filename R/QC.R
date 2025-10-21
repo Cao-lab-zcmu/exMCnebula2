@@ -1,55 +1,109 @@
-devtools::load_all("~/git/MCnebula2/")
-files <- list.files("data_mzmine", pattern = "msms_neg\\.csv$", full.names = TRUE)
-origin <- data.table::fread(files)
-origin <- tibble::as_tibble(origin)
-
-quant <- dplyr::select(
-  origin, id = 1, dplyr::contains("Peak area")
-)
-colnames(quant) <- gsub("\\.mzML Peak area", "", colnames(quant))
-gp <- c(Sham = "^Sham", Model = "^M", QC = "^QC")
-metadata <- MCnebula2:::group_strings(colnames(quant), gp, "sample")
-
-df <- impute_mv(quant, "knn")
-
 library(ggplot2)
+files <- list.files("~/project/kidney_fibrosis_rats_20230518/serum_uuo_byn/data_mzmine", pattern = "msms_neg\\.csv$", full.names = TRUE)
+res <- format_feature_table(files, c(Sham = "Sham", QC = "QC", Model = "M"))
 
-df <- quant
-  qc_cols <- grep(paste0("^", "QC"), colnames(df))
-# 假设你的数据 df 和 qc_cols 已经定义
-# 计算 RSD
-rsd <- apply(df[, qc_cols, drop = FALSE], 1, function(x) {
-  m <- mean(x, na.rm = TRUE)
-  if (is.na(m) || m == 0) return(Inf)
-  sd(x, na.rm = TRUE) / m * 100
-})
-rsd[is.na(rsd)] <- Inf
+#' @export format_feature_table
+format_feature_table <- function(df, gp = NULL) {
+    origin <- data.table::fread(df)
+    origin <- tibble::as_tibble(origin)
+    if (!any(grepl("Peak area", colnames(origin)))) {
+        stop("The feature table does not contain any 'Peak area' columns")
+    }
+    quant <- dplyr::select(
+      origin, id = 1, dplyr::contains("Peak area")
+    )
+    colnames(quant) <- gsub("\\.mzML Peak area", "", colnames(quant))
+    metadata <- get_metadata(colnames(quant), gp)
+    return(list(
+        quant = quant,
+        metadata = metadata
+    ))
+}
 
-# 1. 散点图
-rsd_df <- data.frame(
-  feature = rownames(df),
-  RSD = rsd
-)
+#' @export get_metadata
+get_metadata <- function(strings, patterns = NULL, target = "Sample") {
+  n <- length(strings)
 
-ggplot(rsd_df, aes(x = feature, y = RSD)) +
-  geom_point(color = "steelblue") +
-  geom_hline(yintercept = 30, linetype = "dashed", color = "red") +
-  theme_minimal() +
-  theme(axis.text.x = element_blank()) +
-  labs(title = "RSD Scatter Plot", y = "RSD (%)", x = "Features")
+  group_assign <- rep(NA_character_, n)
+  group_names <- names(patterns)
+  if (is.null(group_names)) {
+    group_names <- paste0("Group", seq_along(patterns))
+  }
+ 
+  for (i in seq_along(patterns)) {
+    idx <- which(is.na(group_assign) & grepl(patterns[i], strings, perl = TRUE))
+    group_assign[idx] <- group_names[i]
+  }
+ 
+  df <- data.frame(
+    target = strings,
+    group = group_assign,
+    stringsAsFactors = FALSE
+  )
+ 
+  df <- df[!is.na(df$group), ]
+  colnames(df)[1] <- target
+  tibble::as_tibble(df)
+}
 
-# 2. 累积分布图（cumulative plot）
-rsd_sorted <- sort(rsd)
-cum_df <- data.frame(
-  RSD = rsd_sorted,
-  CumFraction = seq_along(rsd_sorted) / length(rsd_sorted)
-)
+quant <- res$quant
+metadata <- res$metadata
 
-ggplot(cum_df, aes(x = RSD, y = CumFraction)) +
-  geom_line(color = "darkgreen", size = 1) +
-  geom_vline(xintercept = 30, linetype = "dashed", color = "red") +
-  theme_minimal() +
-  labs(title = "Cumulative RSD Distribution", x = "RSD (%)", y = "Cumulative Fraction")
+#' @import ggplot2
+#' @export plot_RSD
+plot_RSD <- function(df, QC_prefix = "^QC") {
+    qc_cols <- grep(QC_prefix, colnames(df))
+    if (length(qc_cols) == 0) stop("data frame does not contain QC columns")
+    rsd <- apply(df[, qc_cols, drop = FALSE], 1, cal_rsd)
+    rsd[is.na(rsd)] <- Inf
+
+    rsd_df <- data.frame(
+      feature = rownames(df),
+      RSD = rsd
+    )
+
+    rsd_p1 <- ggplot(rsd_df, aes(x = feature, y = RSD)) +
+      geom_point(color = "steelblue") +
+      geom_hline(yintercept = 30, linetype = "dashed", color = "red") +
+      #theme_minimal() +
+      theme(axis.text.x = element_blank()) +
+      labs(title = "RSD Scatter Plot", y = "RSD (%)", x = "Features")
+
+    return(rsd_p1)
+}
+
+cal_rsd <- function(x) {
+    m <- mean(x, na.rm = TRUE)
+    if (is.na(m) || m == 0) return(Inf)
+    sd(x, na.rm = TRUE) / m * 100
+}
+
+#' @import ggplot2
+#' @export plot_RSD_cumu
+plot_RSD_cumu <- function(df, QC_prefix = "^QC") {
+    qc_cols <- grep(QC_prefix, colnames(df))
+    if (length(qc_cols) == 0) stop("data frame does not contain QC columns")
+    rsd <- apply(df[, qc_cols, drop = FALSE], 1, cal_rsd)
+    rsd[is.na(rsd)] <- Inf
+
+    rsd_sorted <- sort(rsd)
+    cum_df <- data.frame(
+     RSD = rsd_sorted,
+        CumFraction = seq_along(rsd_sorted) / length(rsd_sorted)
+    )
+
+    rsd_p2 <- ggplot(cum_df, aes(x = RSD, y = CumFraction)) +
+      geom_line(color = "darkgreen", size = 1) +
+      geom_vline(xintercept = 30, linetype = "dashed", color = "red") +
+      theme_minimal() +
+      labs(title = "Cumulative RSD Distribution", x = "RSD (%)", y = "Cumulative Fraction")
+    return(rsd_p2)
+}
+p1 <- plot_RSD(quant)
+p2 <- plot_RSD_cumu(quant)
+p1
+p2
+
 
 scale_quant <- scale(log2(dplyr::select(quant, -id, -M5_NEG, -dplyr::starts_with("QC")) + 1), center = TRUE, scale = TRUE)
 #scale_quant <- scale(log2(test) + 1, center = TRUE, scale = TRUE)
