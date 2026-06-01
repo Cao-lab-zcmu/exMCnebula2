@@ -71,7 +71,7 @@ plot_EIC_stack <-
         bioc.par(cl)
       data <- MSnbase::readMSData(
         paste0(mzml.path, "/", metadata$file),
-        pdata = new("NAnnotatedDataFrame", metadata),
+        pdata = new("AnnotatedDataFrame", metadata),
         mode = "onDisk"
       )
       ## extract EIC
