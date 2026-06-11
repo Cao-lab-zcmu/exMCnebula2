@@ -138,6 +138,7 @@ plot_EIC_stack <-
           y = int,
           group = sample,
           color = fill),
+        linewidth = 1,
         lineend = "round") +
       labs(color = "Peak attribution", x = "RT (min)", y = "Intensity") +
       geom_text(data = data[[ "anno" ]],
@@ -148,8 +149,13 @@ plot_EIC_stack <-
       theme_minimal() +
       scale_color_manual(values = palette) +
       theme(text = element_text(family = .font),
+        axis.title = element_text(
+          size = 20,
+          face = "bold"
+        ),
+        axis.text = element_text(size = 18),
         plot.background = element_rect(fill = "white", size = 0, color = "transparent"),
-        strip.text = element_text(size = 12)) +
+        strip.text = element_text(size = 18)) +
       geom_blank()
     return(data)
   }
